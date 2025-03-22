@@ -8,7 +8,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (signupForm) {
         signupForm.addEventListener('submit', function(event) {
             event.preventDefault();
-            // Add your form validation and submission logic here
+
+            const username = document.getElementById('signupUsername').value;
+            const password = document.getElementById('signupPassword').value;
+            const email = document.getElementById('signupEmail').value;
+
+            // Store user credentials in local storage
+            const user = { username, password, email };
+            localStorage.setItem('user', JSON.stringify(user));
+
+            // Redirect to the login page
             window.location.href = 'login.html';
         });
     }
@@ -21,8 +30,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const password = document.getElementById('password').value;
             const errorMessage = document.getElementById('error-message');
 
-            // Simulate login validation
-            if (username === 'correctUsername' && password === 'correctPassword') {
+            // Retrieve stored user credentials from local storage
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+
+            if (storedUser && username === storedUser.username && password === storedUser.password) {
                 // Redirect to the main page or perform successful login actions
                 window.location.href = 'home.html';
             } else {
@@ -79,22 +90,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (accountForm) {
         // Fetch user details from a server or local storage
-        const userDetails = {
-            username: 'current_username',
-            email: 'current_email@example.com',
-            password: 'current_password'
-        };
+        const userDetails = JSON.parse(localStorage.getItem('user'));
 
-        document.getElementById('username').value = userDetails.username;
-        document.getElementById('email').value = userDetails.email;
-        document.getElementById('password').value = userDetails.password;
-        document.getElementById('confirm-password').value = userDetails.password;
+        if (userDetails) {
+            document.getElementById('username').value = userDetails.username;
+            document.getElementById('email').value = userDetails.email;
+            document.getElementById('password').value = userDetails.password;
+            document.getElementById('confirm-password').value = userDetails.password;
 
-        accountForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            // Add your form validation and submission logic here
-            alert('Account updated successfully!');
-        });
+            accountForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                // Add your form validation and submission logic here
+                alert('Account updated successfully!');
+            });
+        }
     }
 
     // Load videos on the videos.html page
