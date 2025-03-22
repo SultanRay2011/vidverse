@@ -59,6 +59,11 @@
         .signup-link a:hover {
             text-decoration: underline;
         }
+        .error-message {
+            color: red;
+            margin-bottom: 1em;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -70,6 +75,8 @@
 
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
+
+            <div class="error-message" id="error-message"></div>
 
             <button type="submit">Login</button>
         </form>
