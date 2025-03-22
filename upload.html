@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload - Vidverse</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1em 0;
+            text-align: center;
+        }
+        nav {
+            background-color: #e0e0e0;
+            padding: 1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav .nav-links {
+            display: flex;
+            gap: 1em;
+        }
+        nav .nav-links a {
+            color: #333;
+            text-decoration: none;
+            padding: 0.5em 1em;
+            background-color: #d0d0d0;
+            border-radius: 4px;
+        }
+        nav .nav-links a:hover {
+            background-color: #c0c0c0;
+        }
+        nav .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+        }
+        nav .search-bar input[type="text"] {
+            padding: 0.5em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        nav .search-bar button {
+            padding: 0.5em 1em;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        nav .search-bar button:hover {
+            background-color: #555;
+        }
+        .container {
+            padding: 2em;
+        }
+        .video-post-form {
+            background-color: white;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2em;
+        }
+        .video-post-form h2 {
+            margin-bottom: 1em;
+        }
+        .video-post-form label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        .video-post-form input, .video-post-form textarea, .video-post-form select {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .video-post-form button {
+            width: 100%;
+            padding: 0.5em;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .video-post-form button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Vidverse</h1>
+    </header>
+    <nav>
+        <div class="nav-links">
+            <a href="home.html">Home</a>
+            <a href="videos.html">Videos</a>
+            <a href="channels.html">Channels</a>
+            <a href="upload.html">Upload</a>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search for...">
+            <button>Search</button>
+        </div>
+        <div class="user-links">
+            <a href="account.html">My Account</a>
+            <a href="history.html">History</a>
+            <a href="quicklist.html">QuickList (0)</a>
+            <a href="help.html">Help</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="video-post-form">
+            <h2>Post a Video</h2>
+            <form id="videoPostForm">
+                <label for="videoTitle">Video Title</label>
+                <input type="text" id="videoTitle" name="videoTitle" required>
+
+                <label for="videoDescription">Video Description</label>
+                <textarea id="videoDescription" name="videoDescription" rows="4" required></textarea>
+
+                <label for="videoCategory">Category</label>
+                <select id="videoCategory" name="videoCategory" required>
+                    <option value="">Select Category</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="kids">Kids</option>
+                    <option value="comedy">Comedy</option>
+                    <option value="gaming">Gaming</option>
+                    <option value="pets-animals">Pets and Animals</option>
+                    <option value="travel">Travel</option>
+                    <option value="education">Education</option>
+                    <option value="music">Music</option>
+                    <option value="vehicles">Vehicles</option>
+                </select>
+
+                <label for="videoFile">Upload Video</label>
+                <input type="file" id="videoFile" name="videoFile" accept="video/*" required>
+
+                <button type="submit">Post Video</button>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

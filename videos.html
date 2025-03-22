@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videos - Vidverse</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1em 0;
+            text-align: center;
+        }
+        nav {
+            background-color: #e0e0e0;
+            padding: 1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav .nav-links {
+            display: flex;
+            gap: 1em;
+        }
+        nav .nav-links a {
+            color: #333;
+            text-decoration: none;
+            padding: 0.5em 1em;
+            background-color: #d0d0d0;
+            border-radius: 4px;
+        }
+        nav .nav-links a:hover {
+            background-color: #c0c0c0;
+        }
+        nav .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+        }
+        nav .search-bar input[type="text"] {
+            padding: 0.5em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        nav .search-bar button {
+            padding: 0.5em 1em;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        nav .search-bar button:hover {
+            background-color: #555;
+        }
+        .container {
+            padding: 2em;
+        }
+        .video-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .video-item {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 1em;
+            width: 300px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .video-item video {
+            width: 100%;
+            border-bottom: 1px solid #ddd;
+        }
+        .video-item .details {
+            padding: 1em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Vidverse</h1>
+    </header>
+    <nav>
+        <div class="nav-links">
+            <a href="home.html">Home</a>
+            <a href="videos.html">Videos</a>
+            <a href="channels.html">Channels</a>
+            <a href="upload.html">Upload</a>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search for...">
+            <button>Search</button>
+        </div>
+        <div class="user-links">
+            <a href="account.html">My Account</a>
+            <a href="history.html">History</a>
+            <a href="quicklist.html">QuickList (0)</a>
+            <a href="help.html">Help</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="video-list" id="videoList">
+            <!-- Video items will be dynamically added here -->
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
