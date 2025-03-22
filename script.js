@@ -16,8 +16,19 @@ document.addEventListener('DOMContentLoaded', function() {
     if (loginForm) {
         loginForm.addEventListener('submit', function(event) {
             event.preventDefault();
-            // Add your form validation and submission logic here
-            window.location.href = 'home.html';
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+
+            // Simulate login validation
+            if (username === 'correctUsername' && password === 'correctPassword') {
+                // Redirect to the main page or perform successful login actions
+                window.location.href = 'home.html';
+            } else {
+                errorMessage.textContent = 'Incorrect username or password';
+                errorMessage.style.display = 'block';
+            }
         });
     }
 
