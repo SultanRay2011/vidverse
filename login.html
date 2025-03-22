@@ -84,6 +84,31 @@
             <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+
+                    const username = document.getElementById('username').value;
+                    const password = document.getElementById('password').value;
+                    const errorMessage = document.getElementById('error-message');
+
+                    // Retrieve stored user credentials from local storage
+                    const storedUser = JSON.parse(localStorage.getItem('user'));
+
+                    if (storedUser && username === storedUser.username && password === storedUser.password) {
+                        // Redirect to the main page or perform successful login actions
+                        window.location.href = 'home.html';
+                    } else {
+                        errorMessage.textContent = 'Incorrect username or password';
+                        errorMessage.style.display = 'block';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
