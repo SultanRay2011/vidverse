@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Video - Vidverse</title>
+<link rel="icon" href="vidverse.png" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', sans-serif; }
+
+body { display:flex; min-height:100vh; background:#fff; color:#000; }
+
+/* Sidebar */
+.sidebar {
+  width:220px; background:#fff; padding:20px; height:100vh; position:fixed; top:0; left:0; box-shadow:2px 0 8px rgba(0,0,0,0.1);
+}
+.sidebar .logo { text-align:center; margin-bottom:20px; }
+.sidebar .logo img { width:120px; }
+.sidebar a {
+  display:block; color:#444; text-decoration:none; margin:15px 0; font-size:16px; font-weight:500; transition: color 0.3s;
+}
+.sidebar a:hover { color:#00acee; }
+
+/* Topbar (username + dropdown) */
+.topbar {
+  position: fixed; top:0; right:0; left:220px; height:60px; background:#f0f0f0; display:flex; align-items:center; justify-content:flex-end; padding:0 20px; border-bottom:1px solid #ccc; z-index:100;
+}
+.profile { position: relative; display:flex; align-items:center; gap:10px; cursor:pointer; }
+.profile img { width:32px; height:32px; border-radius:50%; object-fit:cover; }
+.dropdown {
+  display:none; position:absolute; top:45px; right:0; background:#f4f4f4; border:1px solid #ccc;
+  border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); min-width:180px; flex-direction:column; z-index:999;
+}
+.dropdown.show { display:flex; }
+.dropdown a { padding:10px 15px; display:flex; align-items:center; color:#333; text-decoration:none; border-bottom:1px solid #e0e0e0; }
+.dropdown a:last-child { border-bottom:none; }
+.dropdown a:hover { background-color:#e0f7ff; color:#000; }
+.dropdown i { margin-right:10px; color:#00acee; }
+
+/* Main area */
+.main {
+  margin-left:220px; margin-top:60px; width: calc(100% - 220px); display:flex; justify-content:center; align-items:center; padding:20px;
+}
+form {
+  display:flex; flex-direction:column; gap:20px; width:100%; max-width:600px; padding:40px;
+  border:1px solid #ccc; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+h2 { text-align:center; color:#00acee; margin-bottom:10px; }
+input[type="text"], input[type="file"] {
+  padding:15px; border-radius:8px; border:1px solid #ccc; outline:none; font-size:16px;
+}
+button {
+  padding:15px; background:#00acee; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:16px;
+}
+button:hover { background:#008fcc; }
+
+.message { margin-top:10px; font-weight:bold; border-radius:6px; padding:10px; word-break:break-word; }
+.message.success { background:#e6ffec; color:#006b3c; }
+.message.error { background:#ffe5e5; color:#c30000; }
+
+/* Mobile */
+@media(max-width:768px) {
+  .sidebar { position:relative; width:100%; height:auto; display:flex; justify-content:space-around; padding:10px; box-shadow:none; }
+  .sidebar .logo { display:none; }
+  .main { margin-left:0; width:100%; padding:15px; margin-top:100px; }
+  .topbar { left:0; width:100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="logo"><img src="vidversepage.png" alt="Vidverse Logo"></div>
+  <a href="/index"><i class="fas fa-home"></i> Home</a>
+  <a href="/upload"><i class="fas fa-upload"></i> Upload</a>
+  <a href="/favourites"><i class="fas fa-star"></i> Favourites</a>
+  <a href="/profile"><i class="fas fa-user"></i> Profile</a>
+</div>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="profile" id="profileSection" style="display:none;">
+    <img src="profile.jpg" alt="User Profile Picture">
+    <span id="usernameText" onclick="toggleDropdown()" style="cursor:pointer; user-select:none;">Hi, <span id="usernameName"></span> <i class="fas fa-caret-down"></i></span>
+    <div class="dropdown" id="profileDropdown">
+      <a href="/dashboard"><i class="fas fa-tv"></i> Dashboard</a>
+      <a href="/settings"><i class="fas fa-cog"></i> Settings</a>
+      <a href="/history"><i class="fas fa-history"></i> History</a>
+      <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Log out</a>
+    </div>
+  </div>
+</div>
+
+<!-- Main content -->
+<div class="main">
+  <form id="uploadForm">
+    <h2>Upload Video</h2>
+    <input type="text" id="title" placeholder="Video Title" required>
+    <input type="file" id="video" name="video" accept="video/*" required>
+    <button type="submit">Upload Video</button>
+    <div id="message"></div>
+  </form>
+</div>
+
+<script>
+// Load user info
+window.onload = function() {
+  const user = JSON.parse(localStorage.getItem('loggedInUser')) 
+            || JSON.parse(sessionStorage.getItem('loggedInUser'));
+  const profileSection = document.getElementById('profileSection');
+  const usernameName = document.getElementById('usernameName');
+
+  if (user) {
+    usernameName.textContent = user.username;
+    profileSection.style.display = 'flex';
+  } else {
+    profileSection.style.display = 'none';
+  }
+};
+
+// Dropdown toggle
+function toggleDropdown() { document.getElementById('profileDropdown').classList.toggle('show'); }
+window.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('profileDropdown');
+  const usernameText = document.getElementById('usernameText');
+  if (!usernameText.contains(e.target) && !dropdown.contains(e.target)) {
+    dropdown.classList.remove('show');
+  }
+});
+
+// Logout
+function logout() {
+  localStorage.removeItem('loggedInUser');
+  sessionStorage.removeItem('loggedInUser');
+  window.location.href = '/login';
+}
+
+// Upload form
+const form = document.getElementById('uploadForm');
+const messageDiv = document.getElementById('message');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const title = document.getElementById('title').value.trim();
+  const videoFile = document.getElementById('video').files[0];
+
+  if (!title || !videoFile) {
+    messageDiv.textContent = 'Please provide a title and video file.';
+    messageDiv.className = 'message error';
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('video', videoFile);
+
+  try {
+    const res = await fetch('/upload', { method: 'POST', body: formData });
+    const data = await res.json();
+    if (data.success) {
+      const videoUrl = `/uploads/${data.video.filename}`;
+      messageDiv.innerHTML = `<div class="message success">Video uploaded successfully! <br><a href="${videoUrl}" target="_blank">Watch Video</a></div>`;
+      form.reset();
+
+      // Optional: Refresh index.html videos automatically (for same session)
+      fetch('/videos').then(res => res.json()).then(videos => {
+        localStorage.setItem('latestVideos', JSON.stringify(videos));
+      });
+    } else {
+      messageDiv.textContent = data.message || 'Upload failed.';
+      messageDiv.className = 'message error';
+    }
+  } catch (err) {
+    messageDiv.textContent = 'Upload failed. Try again.';
+    messageDiv.className = 'message error';
+  }
+});
+</script>
+
+</body>
+</html>

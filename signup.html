@@ -1,0 +1,156 @@
+mobile friendly
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up - Vidverse</title>
+  <link rel="icon" href="vidverse.png" type="image/png">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .signup-box {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #00acee;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    .error, .success {
+      margin-top: 10px;
+      font-size: 14px;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    .error {
+      background: #ffe5e5;
+      color: #c30000;
+    }
+
+    .success {
+      background: #e6ffec;
+      color: #006b3c;
+    }
+
+    .strength {
+      margin-top: 5px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px;
+      width: 100%;
+      background-color: #00acee;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #008fcc;
+    }
+  </style>
+</head>
+<body>
+
+<div class="signup-box">
+  <!-- Logo inside the signup form -->
+  <div style="text-align: center; margin-bottom: 15px;">
+    <img src="vidversepage.png" alt="Vidverse Logo" style="max-width: 150px;">
+  </div>
+
+  <h2>Create Account</h2>
+  <div id="messageBox"></div>
+
+  <label>Username</label>
+  <input type="text" id="username">
+
+  <label>Email</label>
+  <input type="email" id="email">
+
+  <label>Password</label>
+  <input type="password" id="password">
+  <div id="passwordStrength" class="strength"></div>
+
+  <label>Confirm Password</label>
+  <input type="password" id="confirmPassword">
+
+  <button onclick="handleSignup()">Sign Up</button>
+</div>
+
+ <script>
+function showMessage(type, text) {
+  document.getElementById('messageBox').innerHTML = `<div class="${type}">${text}</div>`;
+}
+
+function isEmailValid(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function handleSignup() {
+  const username = document.getElementById('username').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+
+  if (!username || !email || !password || !confirmPassword) {
+    return showMessage('error', 'All fields are required.');
+  }
+  if (!isEmailValid(email)) {
+    return showMessage('error', 'Invalid email address.');
+  }
+  if (password !== confirmPassword) {
+    return showMessage('error', 'Passwords do not match.');
+  }
+
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+  if (users.some(u => u.username === username)) {
+    return showMessage('error', 'Username already exists.');
+  }
+
+  users.push({ username, email, password });
+  localStorage.setItem('users', JSON.stringify(users));
+
+  showMessage('success', 'Account created! Redirecting to login...');
+  setTimeout(() => window.location.href = 'login.html', 1500);
+}
+
+</script>
+
+</body>
+</html>

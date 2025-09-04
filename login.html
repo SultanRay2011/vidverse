@@ -1,0 +1,195 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Vidverse</title>
+  <link rel="icon" href="vidverse.png" type="image/png">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 10px;
+    }
+
+    .login-box {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 400px;
+      transition: padding 0.3s;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #00acee;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      outline: none;
+      font-size: 16px;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .checkbox-container input {
+      margin-right: 8px;
+    }
+
+    .error, .success {
+      margin-top: 10px;
+      font-size: 14px;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    .error {
+      background: #ffe5e5;
+      color: #c30000;
+    }
+
+    .success {
+      background: #e6ffec;
+      color: #006b3c;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px;
+      width: 100%;
+      background-color: #00acee;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #008fcc;
+    }
+
+    /* Logo */
+    .login-box img {
+      display: block;
+      margin: 0 auto 15px auto;
+      max-width: 150px;
+      width: 100%;
+      height: auto;
+    }
+
+    /* Mobile responsiveness */
+    @media(max-width: 480px){
+      .login-box {
+        padding: 20px 20px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      input[type="text"],
+      input[type="password"] {
+        font-size: 14px;
+        padding: 8px;
+      }
+
+      button {
+        font-size: 14px;
+        padding: 10px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="login-box">
+    <img src="vidversepage.png" alt="Vidverse Logo">
+    <h2>Login to Vidverse</h2>
+    <div id="messageBox"></div>
+
+    <label>Username</label>
+    <input type="text" id="username">
+
+    <label>Password</label>
+    <input type="password" id="password">
+
+    <div class="checkbox-container">
+      <input type="checkbox" id="rememberMe">
+      <label for="rememberMe">Remember me</label>
+    </div>
+
+    <button onclick="handleLogin()">Log In</button>
+  </div>
+
+<script>
+function showMessage(type, text) {
+  document.getElementById('messageBox').innerHTML = `<div class="${type}">${text}</div>`;
+}
+
+function handleLogin() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  const remember = document.getElementById('rememberMe').checked;
+
+  if (!username || !password) {
+    return showMessage('error', 'All fields are required.');
+  }
+
+  const users = JSON.parse(localStorage.getItem('users')) || [];
+  const user = users.find(u => u.username === username && u.password === password);
+
+  if (!user) {
+    return showMessage('error', 'Invalid username or password.');
+  }
+
+  // ✅ Store login locally
+  localStorage.setItem('loggedInUser', JSON.stringify(user));
+
+  // ✅ Set cookie for server access (7 days)
+  document.cookie = `loggedInUser=${JSON.stringify(user)}; path=/; max-age=${7*24*60*60}`;
+
+  // Optional session-only storage if "Remember me" unchecked
+  if (!remember) {
+    sessionStorage.setItem('tempLogin', 'true');
+  }
+
+  showMessage('success', 'Login successful! Redirecting...');
+  setTimeout(() => window.location.href = 'index.html', 1500);
+}
+
+// Auto-redirect if already logged in
+window.addEventListener('DOMContentLoaded', () => {
+  const cookieLoggedIn = document.cookie.split('; ').find(row => row.startsWith('loggedInUser='));
+  if (localStorage.getItem('loggedInUser') || cookieLoggedIn) {
+    window.location.href = 'index.html';
+  }
+});
+</script>
+
+</body>
+</html>

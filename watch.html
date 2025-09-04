@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Watch Video - Vidverse</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', sans-serif; }
+body { display:flex; min-height:100vh; background:#fff; color:#000; }
+
+/* Sidebar */
+.sidebar {
+  width:220px; background:#fff; padding:20px; height:100vh; position:fixed; top:0; left:0; box-shadow:2px 0 8px rgba(0,0,0,0.1);
+}
+.sidebar .logo { text-align:center; margin-bottom:20px; }
+.sidebar .logo img { width:120px; }
+.sidebar a {
+  display:block; color:#444; text-decoration:none; margin:15px 0; font-size:16px; font-weight:500; transition: color 0.3s;
+}
+.sidebar a:hover { color:#00acee; }
+
+/* Topbar */
+.topbar {
+  position: fixed; top:0; right:0; left:220px; height:60px; background:#f0f0f0; display:flex; align-items:center; justify-content:flex-end; padding:0 20px; border-bottom:1px solid #ccc; z-index:100;
+}
+.profile { position: relative; display:flex; align-items:center; gap:10px; cursor:pointer; }
+.profile img { width:32px; height:32px; border-radius:50%; object-fit:cover; }
+.dropdown { display:none; position:absolute; top:45px; right:0; background:#f4f4f4; border:1px solid #ccc;
+  border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); min-width:180px; flex-direction:column; z-index:999;
+}
+.dropdown.show { display:flex; }
+.dropdown a { padding:10px 15px; display:flex; align-items:center; color:#333; text-decoration:none; border-bottom:1px solid #e0e0e0; }
+.dropdown a:last-child { border-bottom:none; }
+.dropdown a:hover { background-color:#e0f7ff; color:#000; }
+.dropdown i { margin-right:10px; color:#00acee; }
+
+/* Main area */
+.main { margin-left:220px; margin-top:60px; width: calc(100% - 220px); display:flex; flex-direction:column; align-items:center; padding:20px; }
+.video-container { width:100%; max-width:800px; display:flex; flex-direction:column; align-items:center; }
+video { width:100%; max-height:450px; border-radius:10px; margin-bottom:15px; background:#000; }
+h2 { margin-bottom:20px; text-align:center; }
+
+/* Mobile */
+@media(max-width:768px) {
+  .sidebar { position:relative; width:100%; height:auto; display:flex; justify-content:space-around; padding:10px; box-shadow:none; }
+  .sidebar .logo { display:none; }
+  .main { margin-left:0; width:100%; padding:15px; margin-top:100px; }
+  .topbar { left:0; width:100%; }
+  video { max-height:300px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="logo"><img src="vidversepage.png" alt="Vidverse Logo"></div>
+  <a href="/index"><i class="fas fa-home"></i> Home</a>
+  <a href="/upload"><i class="fas fa-upload"></i> Upload</a>
+  <a href="/favourites"><i class="fas fa-star"></i> Favourites</a>
+  <a href="/profile"><i class="fas fa-user"></i> Profile</a>
+</div>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="profile" id="profileSection" style="display:none;">
+    <img src="profile.jpg" alt="User Profile Picture">
+    <span id="usernameText" onclick="toggleDropdown()" style="cursor:pointer; user-select:none;">Hi, <span id="usernameName"></span> <i class="fas fa-caret-down"></i></span>
+    <div class="dropdown" id="profileDropdown">
+      <a href="/dashboard"><i class="fas fa-tv"></i> Dashboard</a>
+      <a href="/settings"><i class="fas fa-cog"></i> Settings</a>
+      <a href="/history"><i class="fas fa-history"></i> History</a>
+      <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Log out</a>
+    </div>
+  </div>
+</div>
+
+<!-- Main content -->
+<div class="main">
+  <div class="video-container" id="videoContainer">
+    <h2 id="videoTitle">Loading...</h2>
+    <video id="videoPlayer" controls>
+      Your browser does not support HTML5 video.
+    </video>
+  </div>
+</div>
+
+<script>
+window.onload = function() {
+  const user = JSON.parse(localStorage.getItem('loggedInUser')) 
+            || JSON.parse(sessionStorage.getItem('loggedInUser'));
+  const profileSection = document.getElementById('profileSection');
+  const usernameName = document.getElementById('usernameName');
+
+  // Adjust sidebar
+  const sidebar = document.querySelector('.sidebar');
+  sidebar.innerHTML = `
+    <div class="logo"><img src="vidversepage.png" alt="Vidverse Logo"></div>
+    <a href="/index"><i class="fas fa-home"></i> Home</a>
+  `;
+
+  if (user) {
+    // Logged-in user
+    usernameName.textContent = user.username;
+    profileSection.style.display = 'flex';
+
+    sidebar.innerHTML += `
+      <a href="/upload"><i class="fas fa-upload"></i> Upload</a>
+      <a href="/favourites"><i class="fas fa-star"></i> Favourites</a>
+      <a href="/profile"><i class="fas fa-user"></i> Profile</a>
+    `;
+  } else {
+    // Guest view
+    profileSection.style.display = 'none';
+    sidebar.innerHTML += `
+      <a href="/signup"><i class="fas fa-user-plus"></i> Sign Up</a>
+      <a href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+    `;
+  }
+
+  // ... load video logic
+};
+
+
+  // Load video from URL query ?id=filename
+  const params = new URLSearchParams(window.location.search);
+  const videoId = params.get('id');
+  if (videoId) {
+    const videoPlayer = document.getElementById('videoPlayer');
+    const videoTitle = document.getElementById('videoTitle');
+    videoPlayer.src = `/uploads/${videoId}`;
+
+    // Optional: get video title from videos.json
+    fetch('/videos')
+      .then(res => res.json())
+      .then(videos => {
+        const vid = videos.find(v => v.filename === videoId);
+        videoTitle.textContent = vid ? vid.title : 'Video';
+      });
+  } else {
+    document.getElementById('videoTitle').textContent = 'No video selected';
+    document.getElementById('videoPlayer').style.display = 'none';
+  }
+
+
+// Dropdown toggle
+function toggleDropdown() { document.getElementById('profileDropdown').classList.toggle('show'); }
+window.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('profileDropdown');
+  const usernameText = document.getElementById('usernameText');
+  if (!usernameText.contains(e.target) && !dropdown.contains(e.target)) {
+    dropdown.classList.remove('show');
+  }
+});
+
+// Logout
+function logout() {
+  localStorage.removeItem('loggedInUser');
+  sessionStorage.removeItem('loggedInUser');
+  window.location.href = '/login';
+}
+</script>
+
+</body>
+</html>
